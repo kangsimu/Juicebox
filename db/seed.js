@@ -59,16 +59,16 @@ const {
   }
   
   async function rebuildDB() {
-    try {
-      client.connect();
+  try {
+    client.connect();
 
-      await dropTables();
-      await createTables();
-      await createInitialUsers();
-    } catch (error) {
-      throw error;
-    }
+    await dropTables();
+    await createTables();
+    await createInitialUsers();
+  } catch (error) {
+    throw error;
   }
+}
   
   async function testDB() {
     try {
