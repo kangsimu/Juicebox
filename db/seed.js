@@ -3,7 +3,8 @@
 const {
     client,
     getAllUsers,
-    createUser
+    createUser,
+    updateUser
   } = require('./index');
 
   async function createInitialUsers() {

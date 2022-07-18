@@ -29,9 +29,35 @@ async function getAllUsers() {
   
     return rows;
   }
+
+async function updateUser(id, fields = {}) {
+  const setString= Object.keys(fields).map(
+    (key, index) => `"${ key }"=$${ index + 1}`
+  ).join(', ')
+
+  if(setString === 0){
+    return;
+  }
+
+  try{
+    const result = await client.query(`
+    UPDATE users
+    SET ${ setString }
+    WHERE id=${ id }
+    RETURNING *;
+    `, Object.values(fields));
+
+    return results
+  } catch (error){
+    throw error;
+  }
+}
+
+
 module.exports = {
   client,
   getAllUsers,
-  createUser
+  createUser,
+  updateUser
 }
 
