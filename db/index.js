@@ -27,7 +27,6 @@ async function createPost( {authorId, title, content
     const { rows: [ post ]} = await client.query(`
     INSERT INTO posts("authorId", title, content)
     VALUES($1, $2, $3)
-    ON CONFLICT ("authorId") DO NOTHING
     RETURNING *;
     `, [authorId, title, content])
 
@@ -38,19 +37,19 @@ async function createPost( {authorId, title, content
   }
 }
 
-async function updatePost(id, {title, content, active}) {
-  // const setString= Object.keys().map(
-  //   (key, index) => `"${ key }"=$${ index + 1}`
-  // ).join(', ')
+async function updatePost(id, fields = {}) {
+  const setString= Object.keys(fields).map(
+    (key, index) => `"${ key }"=$${ index + 1}`
+  ).join(', ')
 
-  // if(setString === 0){
-  //   return;
-  // }
+  if(setString === 0){
+    return;
+  }
 
   try{
     const { rows: [ post ] } = await client.query(`
     UPDATE posts
-    SET ${ setString }
+    SET ${setString}
     WHERE id=${ id }
     RETURNING *;
     `, Object.values(fields));
@@ -63,7 +62,7 @@ async function updatePost(id, {title, content, active}) {
   
 async function getAllPosts() {
   try {const { rows } = await client.query(
-    `SELECT id, "authorId" 
+    `SELECT id, "authorId" , title , content 
     FROM posts;
   `);
   return rows;
@@ -82,6 +81,28 @@ async function getPostsByUser(userId) {
     return rows;
   } catch (error) {
     throw error;
+  }
+}
+async function getUserById(userId) {
+  try {
+    const { rows:[ user ] } = await client.query(`
+    SELECT * FROM users
+    WHERE id=${userId}
+    `,)
+
+    if(!row.length){
+      return null}
+    
+      (`DELETE password FROM user
+      WHERE id=${userId}
+      RETURNING *;
+      `)
+
+      user.posts = await getPostsByUser(userId)
+
+      return user
+    } catch (error) {
+      throw error
   }
 }
 
@@ -125,5 +146,6 @@ module.exports = {
   updatePost,
   getAllPosts,
   getPostsByUser,
+  createPost,
 }
 
