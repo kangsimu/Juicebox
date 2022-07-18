@@ -48,7 +48,7 @@ const {
   
       await client.query(`
         DROP TABLE IF EXISTS posts;
-        
+
         DROP TABLE IF EXISTS users;
         
       `);
@@ -75,10 +75,9 @@ const {
         );
         CREATE TABLE posts (
           id SERIAL PRIMARY KEY,
-          username VARCHAR(255) UNIQUE NOT NULL,
-          password VARCHAR(255) NOT NULL,
-          name VARCHAR(255) NOT NULL,
-          location VARCHAR(255) NOT NULL,
+          "authorId" INTEGER REFERENCES users(id) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          content TEXT NOT NULL,
           active BOOLEAN DEFAULT true
         );
 
