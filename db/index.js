@@ -26,7 +26,6 @@ async function getAllUsers() {
       `SELECT id, username 
       FROM users;
     `);
-  
     return rows;
   }
 
