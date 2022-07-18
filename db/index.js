@@ -37,8 +37,53 @@ async function createPost( {authorId, title, content
     throw error;
   }
 }
-  
 
+async function updatePost(id, {title, content, active}) {
+  // const setString= Object.keys().map(
+  //   (key, index) => `"${ key }"=$${ index + 1}`
+  // ).join(', ')
+
+  // if(setString === 0){
+  //   return;
+  // }
+
+  try{
+    const { rows: [ post ] } = await client.query(`
+    UPDATE posts
+    SET ${ setString }
+    WHERE id=${ id }
+    RETURNING *;
+    `, Object.values(fields));
+
+    return post
+  } catch (error){
+    throw error;
+  }
+}
+  
+async function getAllPosts() {
+  try {const { rows } = await client.query(
+    `SELECT id, "authorId" 
+    FROM posts;
+  `);
+  return rows;
+  } catch(error) {
+    console.error(error)
+  }
+}
+
+async function getPostsByUser(userId) {
+  try {
+    const { rows } = await client.query(`
+      SELECT * FROM posts
+      WHERE "authorId"=${ userId };
+    `);
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getAllUsers() {
     const { rows } = await client.query(
@@ -76,6 +121,9 @@ module.exports = {
   client,
   getAllUsers,
   createUser,
-  updateUser
+  updateUser,
+  updatePost,
+  getAllPosts,
+  getPostsByUser,
 }
 
