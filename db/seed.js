@@ -8,7 +8,8 @@ const {
     updatePost,
     getAllPosts,
     getPostsByUser,
-    createPost
+    createPost,
+    getUserById,
   } = require('./index');
 
   async function createInitialUsers() {
@@ -158,7 +159,7 @@ const {
       console.log("Result:", posts)
 
       console.log("Calling updatePost on posts[0]");
-      const updatePostResult = await updatePost(posts[0].id, {
+      const updatePostResult = await updatePost(posts[2].id, {
         title: "Test",
         content: "hello",
       });

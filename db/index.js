@@ -86,17 +86,13 @@ async function getPostsByUser(userId) {
 async function getUserById(userId) {
   try {
     const { rows:[ user ] } = await client.query(`
-    SELECT * FROM users
+    SELECT id, username, name, location, active
+    FROM users
     WHERE id=${userId}
-    `,)
+    `);
 
-    if(!row.length){
+    if(!user){
       return null}
-    
-      (`DELETE password FROM user
-      WHERE id=${userId}
-      RETURNING *;
-      `)
 
       user.posts = await getPostsByUser(userId)
 
@@ -147,5 +143,6 @@ module.exports = {
   getAllPosts,
   getPostsByUser,
   createPost,
+  getUserById,
 }
 
