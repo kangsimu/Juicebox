@@ -13,14 +13,23 @@ const {
       const albert = await createUser({
         username: "albert",
         password: "bertie99",
+        name: "Al Bert",
+        location: "Sidney, Australia",
+        active: true
       });
       const sandra = await createUser({
         username: "sandra",
         password: "2sandy4me",
+        name: "Just Sandra",
+        location: "Ain't telling'",
+        active: true
       });
       const glamgal = await createUser({
         username: "glamgal",
         password: "soglam",
+        name: "Joshua",
+        location: "Upper East Side'",
+        active: true
       });
 
       console.log(albert,sandra,glamgal);
@@ -54,8 +63,11 @@ const {
       await client.query(`
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
-          username varchar(255) UNIQUE NOT NULL,
-          password varchar(255) NOT NULL
+          username VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          location VARCHAR(255) NOT NULL,
+          active BOOLEAN DEFAULT true
         );
       `);
   
