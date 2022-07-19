@@ -12,6 +12,8 @@ const {
   getUserById,
   addTagsToPost,
   createTags,
+  getPostById,
+  getPostsByTagName
 } = require("./index");
 
 async function createInitialUsers() {
@@ -59,18 +61,21 @@ async function createInitialPosts() {
       title: "First post",
       content:
         "This is the first post. I hope this post posts to the post table on the posts database, containing all the posts.",
+      tags: ["#happy", "#youcandoanything"],
     });
     await createPost({
       authorId: sandra.id,
       title: "Second post",
       content:
         "This is the second post. I hope this post posts to the post table on the posts database, containing all the posts.",
+      tags: ["#happy", "#worst-day-ever"],
     });
     await createPost({
       authorId: glamgal.id,
       title: "the post",
       content:
         "This is the  post. I hope this post posts to the post table on the posts database, containing all the posts.",
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"],
     });
     console.log("Finished creating Posts");
   } catch (error) {
@@ -83,9 +88,9 @@ async function dropTables() {
     console.log("Starting to drop tables...");
 
     await client.query(`
-        DROP TABLE IF EXISTS posts_tags;
-        DROP TABLE IF EXISTS tags;
-        DROP TABLE IF EXISTS posts;
+        DROP TABLE IF EXISTS posts_tags CASCADE;
+        DROP TABLE IF EXISTS tags CASCADE;
+        DROP TABLE IF EXISTS posts CASCADE;
         DROP TABLE IF EXISTS users;
       `);
 
@@ -121,9 +126,9 @@ async function createTables() {
           name VARCHAR(255) UNIQUE NOT NULL
         );
         CREATE TABLE post_tags (
-          "postId" INTEGER REFERENCES posts(id),
-          "tagId" INTEGER REFERENCES tags(id),
-          UNIQUE ("postId" ,"tagId") 
+          "postId" INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+          "tagId" INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+          UNIQUE ("postId" ,"tagId")
           );
 
           `);
@@ -167,8 +172,8 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialPosts();
-    await createInitialTags();
   } catch (error) {
+    console.log("Error during rebuildDB")
     throw error;
   }
 }
@@ -197,10 +202,25 @@ async function testDB() {
       content: "hello",
     });
     console.log("Result:", updatePostResult);
+    console.log("Calling updatePost on posts[1], only updating tags");
+    const updatePostTagsResult = await updatePost(posts[1].id, {
+      tags: ["#youcandoanything", "#redfish", "#bluefish"],
+    });
+    console.log("Result:", updatePostTagsResult);
 
     console.log("Calling getUserById with 1");
     const albert = await getUserById(1);
     console.log("Result:", albert);
+    console.log("Calling getPostById with 1");
+    const postbyid = await getPostById(1);
+    console.log("Result:", postbyid);
+    console.log("Calling getPostByUser with 1");
+    const postbyuser = await getPostsByUser(1);
+    console.log("Result:", postbyuser);
+
+    console.log("Calling getPostsByTagName with #happy");
+    const postsWithHappy = await getPostsByTagName("#happy");
+    console.log("Result:", postsWithHappy);
 
     console.log("Finished database tests!");
   } catch (error) {
