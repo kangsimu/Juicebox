@@ -88,9 +88,9 @@ async function dropTables() {
     console.log("Starting to drop tables...");
 
     await client.query(`
-        DROP TABLE IF EXISTS posts_tags CASCADE;
-        DROP TABLE IF EXISTS tags CASCADE;
-        DROP TABLE IF EXISTS posts CASCADE;
+        DROP TABLE IF EXISTS post_tags;
+        DROP TABLE IF EXISTS tags;
+        DROP TABLE IF EXISTS posts;
         DROP TABLE IF EXISTS users;
       `);
 
@@ -126,8 +126,8 @@ async function createTables() {
           name VARCHAR(255) UNIQUE NOT NULL
         );
         CREATE TABLE post_tags (
-          "postId" INTEGER REFERENCES posts(id) ON DELETE CASCADE,
-          "tagId" INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+          "postId" INTEGER REFERENCES posts(id),
+          "tagId" INTEGER REFERENCES tags(id),
           UNIQUE ("postId" ,"tagId")
           );
           `);
