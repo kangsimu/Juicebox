@@ -39,7 +39,7 @@ usersRouter.post("/login", async (req, res, next) => {
       console.log(user.id, user.username)
       const signedtoken = jwt.sign({ id, usern }, process.env.JWT_SECRET)
       console.log(signedtoken)
-      
+      // curl http://localhost:3000/api -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm4iOiJhbGJlcnQiLCJpYXQiOjE2NTg0MTY2OTF9.hkHzAI1iBumvlHVnO_R2vUoYn3sVZCERtQyDPGMpqBU'
 
       // localStorage.setItem("jwttoken", signedtoken)
       res.send({ message: "you're logged in!", token: `${signedtoken}` });
