@@ -29,21 +29,22 @@ postsRouter.post("/", requireUser, async (req, res, next) => {
     postData.tags = tagArr;
   }
 
-  let autor = req.user.posts[0].author
+  let autor = req.user.id
   // let butor = autor[0].tags
   console.log(autor,'req.user test');
 
   try {
     postData.title = title
     postData.content = content
-    postData.authorId = req.user.posts[0].author;
-    postData.tags = req.user.posts[0].tags
+    postData.authorId = req.user.id
+    // postData.tags = req.user.posts[0].tags
     console.log({postData})
     // add authorId, title, content to postData object
     const post = await createPost(postData);
     // this will create the post and the tags for us
+    console.log(post)
     if(post){
-    res.send({ post });}
+    res.send( post );}
     next({
       name: "IncorrectCredentialsError",
       message: "Username or password is incorrect",
