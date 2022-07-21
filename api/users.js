@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken")
 const usersRouter = express.Router();
-const { getAllUsers,getUserByUsername } = require('../db');
+const { getAllUsers,getUserByUsername, createUser } = require('../db');
 
 
 
@@ -34,12 +34,12 @@ usersRouter.post("/login", async (req, res, next) => {
     console.log(user)
     if (user && user.password == password) {
       // create token & return to user
-      let id = user.id
-      let usern = user.username
-      console.log(user.id, user.username)
-      const signedtoken = jwt.sign({ id, usern }, process.env.JWT_SECRET)
-      console.log(signedtoken)
-      // curl http://localhost:3000/api -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm4iOiJhbGJlcnQiLCJpYXQiOjE2NTg0MTY2OTF9.hkHzAI1iBumvlHVnO_R2vUoYn3sVZCERtQyDPGMpqBU'
+      let id = user.id;
+      let usern = user.username;
+      console.log(user.id, user.username);
+      const signedtoken = jwt.sign({ id, usern }, process.env.JWT_SECRET);
+      console.log(signedtoken);
+      // curl http://localhost:3000/api -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJzeXp5Z3lzIiwiaWF0IjoxNjU4NDE3MDk0LCJleHAiOjE2NTkwMjE4OTR9.T5QjBhGwrXzR_GTXlMj9tEIZitEp9vD3j8FfFP7ctIM'
 
       // localStorage.setItem("jwttoken", signedtoken)
       res.send({ message: "you're logged in!", token: `${signedtoken}` });
@@ -55,5 +55,44 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
+usersRouter.post("/register", async (req, res, next) => {
+  const { username, password, name, location } = req.body;
+
+  try {
+    const _user = await getUserByUsername(username);
+
+    if (_user) {
+      next({
+        name: "UserExistsError",
+        message: "A user by that username already exists",
+      });
+    }
+
+    const user = await createUser({
+      username,
+      password,
+      name,
+      location,
+    });
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
+
+    res.send({
+      message: "thank you for signing up",
+      token,
+    });
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
 module.exports = usersRouter;
