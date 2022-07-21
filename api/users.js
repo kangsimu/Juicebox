@@ -31,11 +31,16 @@ usersRouter.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUserByUsername(username);
-
+    console.log(user)
     if (user && user.password == password) {
       // create token & return to user
-      const signedtoken = jwt.sign({ username }, process.env.JWT_SECRET)
+      let id = user.id
+      let usern = user.username
+      console.log(user.id, user.username)
+      const signedtoken = jwt.sign({ id, usern }, process.env.JWT_SECRET)
       console.log(signedtoken)
+      
+
       // localStorage.setItem("jwttoken", signedtoken)
       res.send({ message: "you're logged in!", token: `${signedtoken}` });
     } else {
