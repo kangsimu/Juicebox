@@ -34,10 +34,10 @@ usersRouter.post("/login", async (req, res, next) => {
     console.log(user)
     if (user && user.password == password) {
       // create token & return to user
-      let id = user.id;
-      let usern = user.username;
+      // let id = user.id;
+      // let usern = user.username;
       console.log(user.id, user.username);
-      const signedtoken = jwt.sign({ id, usern }, process.env.JWT_SECRET);
+      const signedtoken = jwt.sign({ id: user.id, username }, process.env.JWT_SECRET);
       console.log(signedtoken);
       // curl http://localhost:3000/api -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJzeXp5Z3lzIiwiaWF0IjoxNjU4NDE3MDk0LCJleHAiOjE2NTkwMjE4OTR9.T5QjBhGwrXzR_GTXlMj9tEIZitEp9vD3j8FfFP7ctIM'
 
