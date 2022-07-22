@@ -107,18 +107,22 @@ postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
   }
 });
 
-
-
-
-
 postsRouter.get('/', async (req, res) => {
-    const posts = await getAllPosts();
+    try {
+      const allPosts = await getAllPosts();
+
+      const posts = allPosts.filter(post => {
+        return post.active || (req.user && post.author.id === req.user.id);
+      });
   
     res.send({posts});
+    } catch ({name, messagge}) {
+      next ({name, message })
+    }
 });
 
 module.exports = postsRouter;
 //curl http://localhost:3000/api/posts -X POST -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm4iOiJhbGJlcnQiLCJpYXQiOjE2NTg0MTc2NzR9.HXWCvXN2WubBOwautyL1tE-TyNxn01mQ1o15cUJgGls'
 //curl http://localhost:3000/api/posts -X POST -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm4iOiJhbGJlcnQiLCJpYXQiOjE2NTg0MjM0NzR9.T1xqEx4EKtbrx9pSz-8m9pVUrkhAiPa7Y0ZIC2DaK_8' -H 'Content-Type: application/json' -d '{"title": "test post", "content": "how is this?", "tags": " #once #twice    #happy"}'
 //curl http://localhost:3000/api/posts/3 -X PATCH -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm4iOiJhbGJlcnQiLCJpYXQiOjE2NTg0MjM0NzR9.T1xqEx4EKtbrx9pSz-8m9pVUrkhAiPa7Y0ZIC2DaK_8' -H 'Content-Type: application/json' -d '{"title": "updating my old stuff", "tags": "#oldisnewagain"}'
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NTg1MDY0MDh9.OBlwgV7FNN6tRjd6wDN-goDybUjtzyeIxxPiE4s-EGs
+//curl http://localhost:3000/api/posts/1 -X DELETE -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE1ODgwNjk3OTcsImV4cCI6MTU4ODY3NDU5N30.xwsxdTFC38eZFTS8h5RMsEgAmz1vw-ZizTka0d-jaYA'
